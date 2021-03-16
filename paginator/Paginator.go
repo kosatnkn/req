@@ -1,4 +1,4 @@
-package entities
+package paginator
 
 // Paginator entity
 type Paginator struct {

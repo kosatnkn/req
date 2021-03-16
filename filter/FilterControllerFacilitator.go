@@ -1,9 +1,7 @@
-package facilitators
+package filter
 
 import (
 	"reflect"
-
-	"github.com/kosatnkn/req/filter/entities"
 )
 
 // FilterControllerFacilitator is the facilitator that will add filter handling capabilities to the controller.
@@ -18,7 +16,7 @@ func NewFilterControllerFacilitator() *FilterControllerFacilitator {
 // AsFilters return the struct passed in to it as a slice of filters.
 //
 // The 'data' parameter should always be a struct.
-func (ctl *FilterControllerFacilitator) AsFilters(data interface{}) (filters []entities.Filter, err error) {
+func (ctl *FilterControllerFacilitator) AsFilters(data interface{}) (filters []Filter, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -39,7 +37,7 @@ func (ctl *FilterControllerFacilitator) AsFilters(data interface{}) (filters []e
 		// need to be captured as valid values for the filter.
 		if f.Kind() == reflect.Bool {
 
-			filters = append(filters, entities.Filter{
+			filters = append(filters, Filter{
 				Name:  elemType.Field(i).Name,
 				Value: f.Interface(),
 			})
@@ -49,7 +47,7 @@ func (ctl *FilterControllerFacilitator) AsFilters(data interface{}) (filters []e
 
 		if !f.IsZero() {
 
-			filters = append(filters, entities.Filter{
+			filters = append(filters, Filter{
 				Name:  elemType.Field(i).Name,
 				Value: f.Interface(),
 			})

@@ -1,9 +1,7 @@
-package facilitators
+package paginator
 
 import (
 	"fmt"
-
-	"github.com/kosatnkn/req/paginator/entities"
 )
 
 // PaginatorRepositoryFacilitator is the facilitator that will add pagination handling capabilities to the repository.
@@ -20,7 +18,7 @@ func NewPaginatorRepositoryFacilitator(database string) *PaginatorRepositoryFaci
 }
 
 // withPagination generates the pagination clause for the query.
-func (repo *PaginatorRepositoryFacilitator) withPagination(q string, p entities.Paginator) string {
+func (repo *PaginatorRepositoryFacilitator) withPagination(q string, p Paginator) string {
 
 	return fmt.Sprintf("%s LIMIT %d OFFSET %d", q, p.Size, (p.Page-1)*p.Size)
 }

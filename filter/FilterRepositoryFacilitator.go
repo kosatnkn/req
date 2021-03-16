@@ -1,11 +1,9 @@
-package facilitators
+package filter
 
 import (
 	"context"
 	"fmt"
 	"reflect"
-
-	"github.com/kosatnkn/req/filter/entities"
 )
 
 const (
@@ -16,7 +14,7 @@ const (
 
 // extendedFilter extension of the normal filter object with additional repository related fields.
 type extendedFilter struct {
-	entities.Filter
+	Filter
 	Field    string
 	Operator string
 }
@@ -62,7 +60,7 @@ func (repo *FilterRepositoryFacilitator) withFilters(q string, fts []extendedFil
 }
 
 // extendFilters sets additional filter parameters like table field and operator for filters.
-func (repo *FilterRepositoryFacilitator) extendFilters(ctx context.Context, filters []entities.Filter) []extendedFilter {
+func (repo *FilterRepositoryFacilitator) extendFilters(ctx context.Context, filters []Filter) []extendedFilter {
 
 	efs := make([]extendedFilter, 0)
 

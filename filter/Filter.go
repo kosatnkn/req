@@ -1,4 +1,4 @@
-package entities
+package filter
 
 // Filter entity
 type Filter struct {

@@ -1,8 +1,4 @@
-package facilitators
-
-import (
-	"github.com/kosatnkn/req/paginator/entities"
-)
+package paginator
 
 // PaginatorControllerFacilitator is the facilitator that will add pagination handling capabilities to the controller.
 type PaginatorControllerFacilitator struct{}
@@ -14,10 +10,10 @@ func NewPaginatorControllerFacilitator() *PaginatorControllerFacilitator {
 }
 
 // getPaginator extracts pagination data from query parameters
-func (ctl *PaginatorControllerFacilitator) getPaginator(page, size uint32) entities.Paginator {
+func (ctl *PaginatorControllerFacilitator) getPaginator(page, size uint32) Paginator {
 
 	// create default paginator
-	paginator := entities.NewPaginator()
+	paginator := NewPaginator()
 
 	paginator.Page = page
 	paginator.Size = size
