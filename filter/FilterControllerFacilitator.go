@@ -13,10 +13,10 @@ func NewFilterControllerFacilitator() *FilterControllerFacilitator {
 	return &FilterControllerFacilitator{}
 }
 
-// AsFilters return the struct passed in to it as a slice of filters.
+// GetFilters return the struct passed in to it as a slice of filters.
 //
 // The 'data' parameter should always be a struct.
-func (ctl *FilterControllerFacilitator) AsFilters(data interface{}) (filters []Filter, err error) {
+func (ctl *FilterControllerFacilitator) GetFilters(data interface{}) (filters []Filter, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {

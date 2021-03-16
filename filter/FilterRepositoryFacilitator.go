@@ -1,15 +1,14 @@
 package filter
 
 import (
-	"context"
 	"fmt"
 	"reflect"
 )
 
 const (
-	selectEqual string = "="
-	selectLike  string = "LIKE"
-	selectIn    string = "IN"
+	SelectEqual string = "="
+	SelectLike  string = "LIKE"
+	SelectIn    string = "IN"
 )
 
 // extendedFilter extension of the normal filter object with additional repository related fields.
@@ -21,46 +20,49 @@ type extendedFilter struct {
 
 // FilterRepositoryFacilitator is the facilitator that will add filter handling capabilities to the repository.
 type FilterRepositoryFacilitator struct {
-	db        string
+	dbType    string
 	filterMap map[string][]string
 }
 
 // NewFilterRepositoryFacilitator creates a new instance of the facilitator.
-func NewFilterRepositoryFacilitator(database string, filterMap map[string][]string) *FilterRepositoryFacilitator {
+func NewFilterRepositoryFacilitator(dbType string, filterMap map[string][]string) *FilterRepositoryFacilitator {
 
 	return &FilterRepositoryFacilitator{
-		db:        database,
+		dbType:    dbType,
 		filterMap: filterMap,
 	}
 }
 
-// withFilters generates the WHERE clause for the query.
-func (repo *FilterRepositoryFacilitator) withFilters(q string, fts []extendedFilter) (string, map[string]interface{}) {
+// WithFilters attaches filters as a WHERE clause to the query.
+func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter) (string, map[string]interface{}) {
 
 	params := map[string]interface{}{}
 
 	if len(fts) == 0 {
-		return q, params
+		return query, params
 	}
 
-	var w string
+	var where string
+	efs := repo.extendFilters(fts)
 
-	for _, f := range fts {
+	for _, f := range efs {
 
 		qp, vs := repo.getConditionQueryPart(f)
 
-		w += qp
+		// attach query part to the where clause
+		where += qp
 
+		// add params needed for the query part
 		for k, v := range vs {
 			params[k] = v
 		}
 	}
 
-	return fmt.Sprintf("%s WHERE%s", q, w[4:]), params
+	return fmt.Sprintf("%s WHERE%s", query, where[4:]), params
 }
 
 // extendFilters sets additional filter parameters like table field and operator for filters.
-func (repo *FilterRepositoryFacilitator) extendFilters(ctx context.Context, filters []Filter) []extendedFilter {
+func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) []extendedFilter {
 
 	efs := make([]extendedFilter, 0)
 
@@ -69,7 +71,6 @@ func (repo *FilterRepositoryFacilitator) extendFilters(ctx context.Context, filt
 		fm := repo.filterMap[filter.Name]
 
 		if len(fm) == 0 {
-			// repo.logger.Warn(ctx, fmt.Sprintf("No field mapping found for key '%s'", filter.Name))
 			continue
 		}
 
@@ -90,7 +91,7 @@ func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 	m := repo.filterMap[name]
 
 	if len(m) == 1 {
-		return selectEqual
+		return SelectEqual
 	}
 
 	return m[1]
@@ -100,9 +101,9 @@ func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 func (repo *FilterRepositoryFacilitator) getConditionQueryPart(f extendedFilter) (string, map[string]interface{}) {
 
 	switch f.Operator {
-	case selectLike:
+	case SelectLike:
 		return repo.getSelectLikeQueryPart(f)
-	case selectIn:
+	case SelectIn:
 		return repo.getSelectInQueryPart(f)
 	default:
 		return repo.getSelectEqualQueryPart(f)

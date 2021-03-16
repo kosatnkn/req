@@ -6,19 +6,19 @@ import (
 
 // PaginatorRepositoryFacilitator is the facilitator that will add pagination handling capabilities to the repository.
 type PaginatorRepositoryFacilitator struct {
-	db string
+	dbType string
 }
 
 // NewPaginatorRepositoryFacilitator creates a new instance of the facilitator.
-func NewPaginatorRepositoryFacilitator(database string) *PaginatorRepositoryFacilitator {
+func NewPaginatorRepositoryFacilitator(dbType string) *PaginatorRepositoryFacilitator {
 
 	return &PaginatorRepositoryFacilitator{
-		db: database,
+		dbType: dbType,
 	}
 }
 
-// withPagination generates the pagination clause for the query.
-func (repo *PaginatorRepositoryFacilitator) withPagination(q string, p Paginator) string {
+// WithPagination attaches the pagination clause to the query.
+func (repo *PaginatorRepositoryFacilitator) WithPagination(query string, p Paginator) string {
 
-	return fmt.Sprintf("%s LIMIT %d OFFSET %d", q, p.Size, (p.Page-1)*p.Size)
+	return fmt.Sprintf("%s LIMIT %d OFFSET %d", query, p.Size, (p.Page-1)*p.Size)
 }

@@ -9,14 +9,11 @@ func NewPaginatorControllerFacilitator() *PaginatorControllerFacilitator {
 	return &PaginatorControllerFacilitator{}
 }
 
-// getPaginator extracts pagination data from query parameters
-func (ctl *PaginatorControllerFacilitator) getPaginator(page, size uint32) Paginator {
+// GetPaginator extracts pagination data from query parameters
+func (ctl *PaginatorControllerFacilitator) GetPaginator(page, size uint32) Paginator {
 
-	// create default paginator
-	paginator := NewPaginator()
-
-	paginator.Page = page
-	paginator.Size = size
-
-	return paginator
+	return Paginator{
+		Page: page,
+		Size: size,
+	}
 }
