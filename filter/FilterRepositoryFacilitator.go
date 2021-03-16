@@ -6,6 +6,11 @@ import (
 )
 
 const (
+	DBMySQL    string = "mysql"
+	DBPostgres string = "postgres"
+)
+
+const (
 	SelectEqual string = "="
 	SelectLike  string = "LIKE"
 	SelectIn    string = "IN"
@@ -34,16 +39,20 @@ func NewFilterRepositoryFacilitator(dbType string, filterMap map[string][]string
 }
 
 // WithFilters attaches filters as a WHERE clause to the query.
-func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter) (string, map[string]interface{}) {
+func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter) (string, map[string]interface{}, error) {
 
 	params := map[string]interface{}{}
 
 	if len(fts) == 0 {
-		return query, params
+		return query, params, nil
 	}
 
 	var where string
-	efs := repo.extendFilters(fts)
+
+	efs, err := repo.extendFilters(fts)
+	if err != nil {
+		return query, params, err
+	}
 
 	for _, f := range efs {
 
@@ -58,13 +67,17 @@ func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter)
 		}
 	}
 
-	return fmt.Sprintf("%s WHERE%s", query, where[4:]), params
+	return fmt.Sprintf("%s WHERE%s", query, where[4:]), params, nil
 }
 
 // extendFilters sets additional filter parameters like table field and operator for filters.
-func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) []extendedFilter {
+func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]extendedFilter, error) {
 
 	efs := make([]extendedFilter, 0)
+
+	if repo.filterMap == nil {
+		return efs, fmt.Errorf("A filter mapping is not declared")
+	}
 
 	for _, filter := range filters {
 
@@ -81,11 +94,11 @@ func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) []exten
 		})
 	}
 
-	return efs
+	return efs, nil
 }
 
 // getOperatorFor returns the operator from field mapping if one is set, otherwise
-// will return 'selectEqual' as the default.
+// will return 'SelectEqual' as the default.
 func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 
 	m := repo.filterMap[name]
