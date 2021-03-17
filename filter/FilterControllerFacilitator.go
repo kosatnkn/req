@@ -9,7 +9,6 @@ type FilterControllerFacilitator struct{}
 
 // NewFilterControllerFacilitator creates a new instance of the facilitator.
 func NewFilterControllerFacilitator() *FilterControllerFacilitator {
-
 	return &FilterControllerFacilitator{}
 }
 

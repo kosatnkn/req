@@ -3,17 +3,8 @@ package filter
 import (
 	"fmt"
 	"reflect"
-)
 
-const (
-	DBMySQL    string = "mysql"
-	DBPostgres string = "postgres"
-)
-
-const (
-	SelectEqual string = "="
-	SelectLike  string = "LIKE"
-	SelectIn    string = "IN"
+	"github.com/kosatnkn/req"
 )
 
 // extendedFilter extension of the normal filter object with additional repository related fields.
@@ -104,7 +95,7 @@ func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 	m := repo.filterMap[name]
 
 	if len(m) == 1 {
-		return SelectEqual
+		return req.SelectEqual
 	}
 
 	return m[1]
@@ -114,9 +105,9 @@ func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 func (repo *FilterRepositoryFacilitator) getConditionQueryPart(f extendedFilter) (string, map[string]interface{}) {
 
 	switch f.Operator {
-	case SelectLike:
+	case req.SelectLike:
 		return repo.getSelectLikeQueryPart(f)
-	case SelectIn:
+	case req.SelectIn:
 		return repo.getSelectInQueryPart(f)
 	default:
 		return repo.getSelectEqualQueryPart(f)

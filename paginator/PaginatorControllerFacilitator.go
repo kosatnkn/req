@@ -5,7 +5,6 @@ type PaginatorControllerFacilitator struct{}
 
 // NewPaginatorControllerFacilitator creates a new instance of the facilitator.
 func NewPaginatorControllerFacilitator() *PaginatorControllerFacilitator {
-
 	return &PaginatorControllerFacilitator{}
 }
 

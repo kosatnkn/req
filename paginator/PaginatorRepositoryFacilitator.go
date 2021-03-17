@@ -2,6 +2,8 @@ package paginator
 
 import (
 	"fmt"
+
+	"github.com/kosatnkn/req"
 )
 
 // PaginatorRepositoryFacilitator is the facilitator that will add pagination handling capabilities to the repository.
@@ -20,5 +22,12 @@ func NewPaginatorRepositoryFacilitator(dbType string) *PaginatorRepositoryFacili
 // WithPagination attaches the pagination clause to the query.
 func (repo *PaginatorRepositoryFacilitator) WithPagination(query string, p Paginator) string {
 
-	return fmt.Sprintf("%s LIMIT %d OFFSET %d", query, p.Size, (p.Page-1)*p.Size)
+	switch repo.dbType {
+	case req.DBMySQL:
+		return fmt.Sprintf("%s LIMIT %d OFFSET %d", query, p.Size, (p.Page-1)*p.Size)
+	case req.DBPostgres:
+		return fmt.Sprintf("%s limit %d offset %d", query, p.Size, (p.Page-1)*p.Size)
+	default:
+		return ""
+	}
 }
