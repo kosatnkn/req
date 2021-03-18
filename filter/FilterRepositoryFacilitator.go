@@ -67,7 +67,7 @@ func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]exte
 	efs := make([]extendedFilter, 0)
 
 	if repo.filterMap == nil {
-		return efs, fmt.Errorf("A filter mapping is not declared")
+		return efs, fmt.Errorf("repoFilter: a filter mapping is not declared")
 	}
 
 	for _, filter := range filters {
@@ -122,6 +122,7 @@ func (repo *FilterRepositoryFacilitator) getSelectEqualQueryPart(f extendedFilte
 	m := make(map[string]interface{}, 0)
 
 	m[f.Name] = f.Value
+
 	return fmt.Sprintf(" AND %s %s ?%s", f.Field, f.Operator, f.Name), m
 }
 
@@ -133,6 +134,7 @@ func (repo *FilterRepositoryFacilitator) getSelectLikeQueryPart(f extendedFilter
 	m := make(map[string]interface{}, 0)
 
 	m[f.Name] = fmt.Sprintf("%%%s%%", f.Value)
+
 	return fmt.Sprintf(" AND %s %s ?%s", f.Field, f.Operator, f.Name), m
 }
 
