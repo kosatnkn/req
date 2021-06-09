@@ -13,7 +13,6 @@ type PaginatorRepositoryFacilitator struct {
 
 // NewPaginatorRepositoryFacilitator creates a new instance of the facilitator.
 func NewPaginatorRepositoryFacilitator(dbType string) *PaginatorRepositoryFacilitator {
-
 	return &PaginatorRepositoryFacilitator{
 		dbType: dbType,
 	}

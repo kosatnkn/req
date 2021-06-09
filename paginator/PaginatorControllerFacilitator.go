@@ -10,7 +10,6 @@ func NewPaginatorControllerFacilitator() *PaginatorControllerFacilitator {
 
 // GetPaginator extracts pagination data from query parameters
 func (ctl *PaginatorControllerFacilitator) GetPaginator(page, size uint32) Paginator {
-
 	return Paginator{
 		Page: page,
 		Size: size,

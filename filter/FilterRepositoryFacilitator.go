@@ -22,7 +22,6 @@ type FilterRepositoryFacilitator struct {
 
 // NewFilterRepositoryFacilitator creates a new instance of the facilitator.
 func NewFilterRepositoryFacilitator(dbType string, filterMap map[string][]string) *FilterRepositoryFacilitator {
-
 	return &FilterRepositoryFacilitator{
 		dbType:    dbType,
 		filterMap: filterMap,
@@ -32,7 +31,7 @@ func NewFilterRepositoryFacilitator(dbType string, filterMap map[string][]string
 // WithFilters attaches filters as a WHERE clause to the query.
 func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter) (string, map[string]interface{}, error) {
 
-	params := map[string]interface{}{}
+	params := make(map[string]interface{})
 
 	if len(fts) == 0 {
 		return query, params, nil
@@ -46,7 +45,6 @@ func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter)
 	}
 
 	for _, f := range efs {
-
 		qp, vs := repo.getConditionQueryPart(f)
 
 		// attach query part to the where clause
@@ -67,13 +65,11 @@ func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]exte
 	efs := make([]extendedFilter, 0)
 
 	if repo.filterMap == nil {
-		return efs, fmt.Errorf("repoFilter: a filter mapping is not declared")
+		return efs, fmt.Errorf("filter-repo-facilitator: a filter mapping is not declared")
 	}
 
 	for _, filter := range filters {
-
 		fm := repo.filterMap[filter.Name]
-
 		if len(fm) == 0 {
 			continue
 		}
@@ -93,7 +89,6 @@ func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]exte
 func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 
 	m := repo.filterMap[name]
-
 	if len(m) == 1 {
 		return req.SelectEqual
 	}
@@ -119,8 +114,7 @@ func (repo *FilterRepositoryFacilitator) getConditionQueryPart(f extendedFilter)
 // ex: AND `field` = `value`
 func (repo *FilterRepositoryFacilitator) getSelectEqualQueryPart(f extendedFilter) (string, map[string]interface{}) {
 
-	m := make(map[string]interface{}, 0)
-
+	m := make(map[string]interface{})
 	m[f.Name] = f.Value
 
 	return fmt.Sprintf(" AND %s %s ?%s", f.Field, f.Operator, f.Name), m
@@ -131,8 +125,7 @@ func (repo *FilterRepositoryFacilitator) getSelectEqualQueryPart(f extendedFilte
 // ex: AND `field` LIKE `%value%`
 func (repo *FilterRepositoryFacilitator) getSelectLikeQueryPart(f extendedFilter) (string, map[string]interface{}) {
 
-	m := make(map[string]interface{}, 0)
-
+	m := make(map[string]interface{})
 	m[f.Name] = fmt.Sprintf("%%%s%%", f.Value)
 
 	return fmt.Sprintf(" AND %s %s ?%s", f.Field, f.Operator, f.Name), m
@@ -143,33 +136,27 @@ func (repo *FilterRepositoryFacilitator) getSelectLikeQueryPart(f extendedFilter
 // ex: AND `field` IN (`value1`, `value2`, `value3`)
 func (repo *FilterRepositoryFacilitator) getSelectInQueryPart(f extendedFilter) (string, map[string]interface{}) {
 
-	m := make(map[string]interface{}, 0)
+	m := make(map[string]interface{})
 
 	// placeholders
 	var phs string
 	var vs []interface{}
 
 	switch reflect.TypeOf(f.Value).Kind() {
-
 	case reflect.Slice:
-
 		rvs := reflect.ValueOf(f.Value)
-
 		if rvs.Len() == 0 {
 			return "", m
 		}
-
 		for i := 0; i < rvs.Len(); i++ {
 			vs = append(vs, rvs.Index(i).Interface())
 		}
-
 	default:
 		return "", m
 	}
 
 	// iterate through the interface{} slice to build the `in` clause
 	for i, v := range vs {
-
 		ph := fmt.Sprintf("%s%d", f.Name, i)
 		phs += fmt.Sprintf(",?%s", ph)
 		m[ph] = v

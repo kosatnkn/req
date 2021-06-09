@@ -28,14 +28,12 @@ func (ctl *FilterControllerFacilitator) GetFilters(data interface{}) (filters []
 	elemType := elem.Type()
 
 	for i := 0; i < elem.NumField(); i++ {
-
 		f := elem.Field(i)
 
 		// prevent ignoring of the filter if it is of the type `bool`,
 		// in which case both `true` and `false`(zero value for bool type)
 		// need to be captured as valid values for the filter.
 		if f.Kind() == reflect.Bool {
-
 			filters = append(filters, Filter{
 				Name:  elemType.Field(i).Name,
 				Value: f.Interface(),
@@ -45,7 +43,6 @@ func (ctl *FilterControllerFacilitator) GetFilters(data interface{}) (filters []
 		}
 
 		if !f.IsZero() {
-
 			filters = append(filters, Filter{
 				Name:  elemType.Field(i).Name,
 				Value: f.Interface(),
