@@ -30,7 +30,6 @@ func NewFilterRepositoryFacilitator(dbType string, filterMap map[string][]string
 
 // WithFilters attaches filters as a WHERE clause to the query.
 func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter) (string, map[string]interface{}, error) {
-
 	params := make(map[string]interface{})
 
 	if len(fts) == 0 {
@@ -61,7 +60,6 @@ func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter)
 
 // extendFilters sets additional filter parameters like table field and operator for filters.
 func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]extendedFilter, error) {
-
 	efs := make([]extendedFilter, 0)
 
 	if repo.filterMap == nil {
@@ -87,7 +85,6 @@ func (repo *FilterRepositoryFacilitator) extendFilters(filters []Filter) ([]exte
 // getOperatorFor returns the operator from field mapping if one is set, otherwise
 // will return 'SelectEqual' as the default.
 func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
-
 	m := repo.filterMap[name]
 	if len(m) == 1 {
 		return req.SelectEqual
@@ -98,7 +95,6 @@ func (repo *FilterRepositoryFacilitator) getOperatorFor(name string) string {
 
 // getConditionQueryPart returns the query part needed to add the filter condition to the query.
 func (repo *FilterRepositoryFacilitator) getConditionQueryPart(f extendedFilter) (string, map[string]interface{}) {
-
 	switch f.Operator {
 	case req.SelectLike:
 		return repo.getSelectLikeQueryPart(f)
@@ -113,7 +109,6 @@ func (repo *FilterRepositoryFacilitator) getConditionQueryPart(f extendedFilter)
 //
 // ex: AND `field` = `value`
 func (repo *FilterRepositoryFacilitator) getSelectEqualQueryPart(f extendedFilter) (string, map[string]interface{}) {
-
 	m := make(map[string]interface{})
 	m[f.Name] = f.Value
 
@@ -124,7 +119,6 @@ func (repo *FilterRepositoryFacilitator) getSelectEqualQueryPart(f extendedFilte
 //
 // ex: AND `field` LIKE `%value%`
 func (repo *FilterRepositoryFacilitator) getSelectLikeQueryPart(f extendedFilter) (string, map[string]interface{}) {
-
 	m := make(map[string]interface{})
 	m[f.Name] = fmt.Sprintf("%%%s%%", f.Value)
 
@@ -135,7 +129,6 @@ func (repo *FilterRepositoryFacilitator) getSelectLikeQueryPart(f extendedFilter
 //
 // ex: AND `field` IN (`value1`, `value2`, `value3`)
 func (repo *FilterRepositoryFacilitator) getSelectInQueryPart(f extendedFilter) (string, map[string]interface{}) {
-
 	m := make(map[string]interface{})
 
 	// placeholders

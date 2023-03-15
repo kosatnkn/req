@@ -16,7 +16,6 @@ func NewFilterControllerFacilitator() *FilterControllerFacilitator {
 //
 // The 'data' parameter should always be a struct.
 func (ctl *FilterControllerFacilitator) GetFilters(data interface{}) (filters []Filter, err error) {
-
 	defer func() {
 		if r := recover(); r != nil {
 			err = r.(error)
