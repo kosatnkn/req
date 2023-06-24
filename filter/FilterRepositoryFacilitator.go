@@ -42,6 +42,9 @@ func (repo *FilterRepositoryFacilitator) WithFilters(query string, fts []Filter)
 	if err != nil {
 		return query, params, err
 	}
+	if len(efs) == 0 {
+		return query, params, nil
+	}
 
 	for _, f := range efs {
 		qp, vs := repo.getConditionQueryPart(f)
