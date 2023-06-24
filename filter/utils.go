@@ -13,7 +13,7 @@ func FilterByName(fts []Filter, name string) (Filter, bool) {
 
 // RemoveFilterByName removes the filter with the given name and returns the rest of the filters slice.
 // This will also remove duplicate filters under the given name if there are any.
-func RemoveFilterByName(fts []Filter, name string) ([]Filter, bool) {
+func RemoveFilterByName(fts []Filter, name string) []Filter {
 	var nf []Filter
 
 	for _, f := range fts {
@@ -22,5 +22,5 @@ func RemoveFilterByName(fts []Filter, name string) ([]Filter, bool) {
 		}
 	}
 
-	return nf, false
+	return nf
 }
