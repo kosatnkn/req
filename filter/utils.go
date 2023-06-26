@@ -1,5 +1,7 @@
 package filter
 
+import "reflect"
+
 // FilterByName returns the filter matching the given name.
 func FilterByName(fts []Filter, name string) (Filter, bool) {
 	for _, f := range fts {
@@ -23,4 +25,27 @@ func RemoveFilterByName(fts []Filter, name string) []Filter {
 	}
 
 	return nf
+}
+
+// convertToSlice converts the given interface type that has a slice as its underlying type in to a slice of interfaces.
+func convertToSlice(data interface{}) []interface{} {
+	value := reflect.ValueOf(data)
+
+	// if data is a pointer, get the underlying value
+	if value.Kind() == reflect.Ptr {
+		value = value.Elem()
+	}
+
+	if value.Kind() != reflect.Slice {
+		return nil
+	}
+
+	length := value.Len()
+	result := make([]interface{}, length)
+
+	for i := 0; i < length; i++ {
+		result[i] = value.Index(i).Interface()
+	}
+
+	return result
 }
